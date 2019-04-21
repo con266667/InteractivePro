@@ -3,6 +3,8 @@ video = document.getElementById('playVideo');
 links = document.getElementById('links');
 var linkshide;
 var rowNumber;
+var view = "create";
+checkbox = document.getElementById('hint');
 
 function setupCreate(){
     document.getElementById('setup').style.display = "block";
@@ -22,7 +24,8 @@ function setupClose(){
 }
 
 function showPlay(){
-        video.play();
+        view = "play";
+        
         upload = document.getElementById('setupName1').value;
         passages = document.getElementById('passages').value;
         document.getElementById('create').style.display = "none";
@@ -33,17 +36,33 @@ function showPlay(){
         document.getElementById('second').value = linkSecond;
         videosrc = document.getElementById(upload).value;
         document.getElementById('videoSource').src = videosrc;
+        video.src = videosrc;
+        video.play();
         v=1;
         
 }
 
 function firstLink(){
+    document.getElementById('first').style.background = "white";
     timeToEnd = (video.duration - video.currentTime)*1000;
+    if(checkbox.checked == true){
+        console.log('hint');
+    } else {
+        console.log('no hint');
+    }
     setTimeout(function(){
+        document.getElementById('first').style.background = "";
+        document.getElementById('second').style.background = "";
         //Set Video Source
         nameFirst = document.getElementById('setupFirst'+v).value;
-        videosrc2 = document.getElementById(nameFirst).value;
-        videoNumber = document.getElementById(nameFirst).className;
+        if(checkbox.checked == true){
+            hint = document.getElementById('hintFirst'+v).value;
+            videosrc2 = document.getElementById(nameFirst+hint).value;
+            videoNumber = document.getElementById(nameFirst+hint).className;
+        } else {
+            videosrc2 = document.getElementById(nameFirst).value;
+            videoNumber = document.getElementById(nameFirst).className;
+        }
         v=videoNumber;
         video.src = videosrc2;
         //Set Links
@@ -56,13 +75,22 @@ function firstLink(){
 }
 
 function secondLink(){
+    document.getElementById('second').style.background = "white";
     timeToEnd = (video.duration - video.currentTime)*1000;
-
     setTimeout(function(){
+        document.getElementById('first').style.background = "";
+        document.getElementById('second').style.background = "";
         //Set Video Source
         nameSecond = document.getElementById('setupSecond'+v).value;
-        videosrc2 = document.getElementById(nameSecond).value;
-        videoNumber = document.getElementById(nameSecond).className;
+        if(checkbox.checked == true){
+            hint = document.getElementById('hintSecond'+v).value;
+            videosrc2 = document.getElementById(nameSecond+hint).value;
+            videoNumber = document.getElementById(nameSecond+hint).className;
+        } else {
+            videosrc2 = document.getElementById(nameSecond).value;
+            videoNumber = document.getElementById(nameSecond).className;
+        }
+        
         v=videoNumber;
         video.src = videosrc2;
         //Set Links
@@ -76,11 +104,10 @@ function secondLink(){
 
 function hideLinks(){
     linkshide = true;
-    links.style.display = 'none';
+    links.className = 'links fadeout';
 }
 
 function setupSubmit(){
-    console.log(rowNumber);
     var rows = document.getElementById('setupTable').rows.length;
     for(var i=parseInt(rows, 10);i>-1;i--){
         document.getElementById('setupTable').deleteRow(i-1);
@@ -92,32 +119,51 @@ function setupSubmit(){
         //Create File Input
         rowInput = document.createElement('input');
         rowInput.setAttribute("type", "text");
-        rowInput.setAttribute("value", "Video Link");
+        rowInput.setAttribute("placeholder", "Video Link");
         rowInput.setAttribute("id", "uploads"+rowNumber+"");
         rowInput.setAttribute("class", rowNumber);
         //Create Name Input
         rowName = document.createElement('input');
         rowName.setAttribute("type", "text");
-        rowName.setAttribute("value", "Name");
+        rowName.setAttribute("placeholder", "Name");
         rowName.setAttribute("id", "setupName"+rowNumber+"");
         rowName.setAttribute("class", rowNumber);
         //Create First Link Input
         rowFirst = document.createElement('input');
         rowFirst.setAttribute("type", "text");
-        rowFirst.setAttribute("value", "First Link");
+        rowFirst.setAttribute("placeholder", "First Link");
         rowFirst.setAttribute("id", "setupFirst"+rowNumber+"");
         rowFirst.setAttribute("class", rowNumber);
         //Create Second Link Input
         rowSecond = document.createElement('input');
         rowSecond.setAttribute("type", "Second");
-        rowSecond.setAttribute("value", "Second Link");
+        rowSecond.setAttribute("placeholder", "Second Link");
         rowSecond.setAttribute("id", "setupSecond"+rowNumber+"");
         rowSecond.setAttribute("class", rowNumber);
+
         //Add items to row
         x.appendChild(rowInput);
         x.appendChild(rowName);
         x.appendChild(rowFirst);
+        if(checkbox.checked == true){
+        //Create Hint Input
+        rowHintFirst = document.createElement('input');
+        rowHintFirst.setAttribute("type", "text");
+        rowHintFirst.setAttribute("placeholder", "Hint");
+        rowHintFirst.setAttribute("id", "hintFirst"+rowNumber+"");
+        rowHintFirst.setAttribute("class", rowNumber);
+        x.appendChild(rowHintFirst);
+        }
         x.appendChild(rowSecond);
+        if(checkbox.checked == true){
+        //Create Hint Input
+        rowHintSecond = document.createElement('input');
+        rowHintSecond.setAttribute("type", "text");
+        rowHintSecond.setAttribute("placeholder", "Hint");
+        rowHintSecond.setAttribute("id", "hintSecond"+rowNumber+"");
+        rowHintSecond.setAttribute("class", rowNumber);
+        x.appendChild(rowHintSecond);
+        }
    };  
 }
 
@@ -131,6 +177,7 @@ video.ontimeupdate = function(){
     if(timeToEnd < timeToLinks){
         if (linkshide == false){
         links.style.display = "block";
+        links.className = 'links';
         }
     }
 }
@@ -138,4 +185,23 @@ video.ontimeupdate = function(){
 video.onplay = function(){
     linkshide = false;
     links.style.display = "none";
+}
+
+video.onclick = function(){
+    if(video.paused){
+        video.play();
+    } else {
+        video.pause();
+    }
+}
+
+window.onkeyup = function(e){
+    if(view == "play"){
+        video.pause();
+        document.getElementById('create').style.display = "block";
+        document.getElementById('play').style.display = "none";
+        view = "create";
+    }
+    
+    
 }
