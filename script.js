@@ -25,7 +25,7 @@ function setupClose(){
 
 function showPlay(){
         view = "play";
-        
+        links.style.opacity = "";
         upload = document.getElementById('setupName1').value;
         passages = document.getElementById('passages').value;
         document.getElementById('create').style.display = "none";
@@ -45,11 +45,6 @@ function showPlay(){
 function firstLink(){
     document.getElementById('first').style.background = "white";
     timeToEnd = (video.duration - video.currentTime)*1000;
-    if(checkbox.checked == true){
-        console.log('hint');
-    } else {
-        console.log('no hint');
-    }
     setTimeout(function(){
         document.getElementById('first').style.background = "";
         document.getElementById('second').style.background = "";
@@ -66,10 +61,16 @@ function firstLink(){
         v=videoNumber;
         video.src = videosrc2;
         //Set Links
-        linkOne = document.getElementById('setupFirst'+videoNumber).value;
-        linkTwo = document.getElementById('setupSecond'+videoNumber).value;
-        document.getElementById('first').value = linkOne;
-        document.getElementById('second').value = linkTwo;
+        end = document.getElementById("end"+v);
+        if(end.checked == false){
+            linkOne = document.getElementById('setupFirst'+videoNumber).value;
+            linkTwo = document.getElementById('setupSecond'+videoNumber).value;
+            document.getElementById('first').value = linkOne;
+            document.getElementById('second').value = linkTwo;
+        } else {
+            links.style.opacity = "0";
+        }
+        
     }, timeToEnd);
     hideLinks();
 }
@@ -94,10 +95,15 @@ function secondLink(){
         v=videoNumber;
         video.src = videosrc2;
         //Set Links
-        linkOne = document.getElementById('setupFirst'+videoNumber).value;
-        linkTwo = document.getElementById('setupSecond'+videoNumber).value;
-        document.getElementById('first').value = linkOne;
-        document.getElementById('second').value = linkTwo;
+        end = document.getElementById("end"+v);
+        if(end.checked == false){
+            linkOne = document.getElementById('setupFirst'+videoNumber).value;
+            linkTwo = document.getElementById('setupSecond'+videoNumber).value;
+            document.getElementById('first').value = linkOne;
+            document.getElementById('second').value = linkTwo;
+        } else {
+            links.style.opacity = "0";
+        }
     }, timeToEnd);  
     hideLinks();  
 }
@@ -141,6 +147,11 @@ function setupSubmit(){
         rowSecond.setAttribute("id", "setupSecond"+rowNumber+"");
         rowSecond.setAttribute("class", rowNumber);
 
+        rowEnd = document.createElement('input');
+        rowEnd.setAttribute("type", "checkbox");
+        rowEnd.setAttribute("id", "end"+rowNumber+"");
+        rowEnd.setAttribute("class", rowNumber);
+
         //Add items to row
         x.appendChild(rowInput);
         x.appendChild(rowName);
@@ -164,6 +175,8 @@ function setupSubmit(){
         rowHintSecond.setAttribute("class", rowNumber);
         x.appendChild(rowHintSecond);
         }
+        x.appendChild(rowEnd);
+
    };  
 }
 
