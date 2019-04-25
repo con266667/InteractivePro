@@ -26,6 +26,9 @@ function setupClose(){
 function showPlay(){
         view = "play";
         links.style.opacity = "";
+        document.getElementById('first').className = "first";
+        document.getElementById('second').className = "second";
+        document.getElementById('bar').className = "bar";
         upload = document.getElementById('setupName1').value;
         passages = document.getElementById('passages').value;
         document.getElementById('create').style.display = "none";
@@ -43,11 +46,14 @@ function showPlay(){
 }
 
 function firstLink(){
-    document.getElementById('first').style.background = "white";
+    document.getElementById('bar').classList.toggle('colorchange');
+    document.getElementById('second').classList.toggle('textfade');
+    document.getElementById('first').classList.toggle('chosen');
     timeToEnd = (video.duration - video.currentTime)*1000;
     setTimeout(function(){
-        document.getElementById('first').style.background = "";
-        document.getElementById('second').style.background = "";
+        document.getElementById('first').className = "first";
+        document.getElementById('second').className = "second";
+        document.getElementById('bar').className = "bar";
         //Set Video Source
         nameFirst = document.getElementById('setupFirst'+v).value;
         if(checkbox.checked == true){
@@ -61,26 +67,30 @@ function firstLink(){
         v=videoNumber;
         video.src = videosrc2;
         //Set Links
-        end = document.getElementById("end"+v);
-        if(end.checked == false){
-            linkOne = document.getElementById('setupFirst'+videoNumber).value;
-            linkTwo = document.getElementById('setupSecond'+videoNumber).value;
-            document.getElementById('first').value = linkOne;
-            document.getElementById('second').value = linkTwo;
-        } else {
-            links.style.opacity = "0";
-        }
-        
+        setTimeout(function(){
+            end = document.getElementById("end"+v);
+            if(end.checked == false){
+                linkOne = document.getElementById('setupFirst'+videoNumber).value;
+                linkTwo = document.getElementById('setupSecond'+videoNumber).value;
+                document.getElementById('first').value = linkOne;
+                document.getElementById('second').value = linkTwo;
+            } else {
+                links.style.opacity = "0";
+            }
+        },700)
+        hideLinks(); 
     }, timeToEnd);
-    hideLinks();
 }
 
 function secondLink(){
-    document.getElementById('second').style.background = "white";
+    document.getElementById('bar').classList.toggle('colorchange');
+    document.getElementById('first').classList.toggle('textfade');
+    document.getElementById('second').classList.toggle('chosen');
     timeToEnd = (video.duration - video.currentTime)*1000;
     setTimeout(function(){
-        document.getElementById('first').style.background = "";
-        document.getElementById('second').style.background = "";
+        document.getElementById('first').className = "first";
+        document.getElementById('second').className = "second";
+        document.getElementById('bar').className = "bar";
         //Set Video Source
         nameSecond = document.getElementById('setupSecond'+v).value;
         if(checkbox.checked == true){
@@ -95,17 +105,20 @@ function secondLink(){
         v=videoNumber;
         video.src = videosrc2;
         //Set Links
-        end = document.getElementById("end"+v);
-        if(end.checked == false){
-            linkOne = document.getElementById('setupFirst'+videoNumber).value;
-            linkTwo = document.getElementById('setupSecond'+videoNumber).value;
-            document.getElementById('first').value = linkOne;
-            document.getElementById('second').value = linkTwo;
-        } else {
-            links.style.opacity = "0";
-        }
-    }, timeToEnd);  
-    hideLinks();  
+        setTimeout(function(){
+            end = document.getElementById("end"+v);
+            if(end.checked == false){
+                linkOne = document.getElementById('setupFirst'+videoNumber).value;
+                linkTwo = document.getElementById('setupSecond'+videoNumber).value;
+                document.getElementById('first').value = linkOne;
+                document.getElementById('second').value = linkTwo;
+            } else {
+                links.style.opacity = "0";
+            }
+        },700)
+        
+        hideLinks();
+    }, timeToEnd);     
 }
 
 function hideLinks(){
@@ -189,8 +202,13 @@ video.ontimeupdate = function(){
 
     if(timeToEnd < timeToLinks){
         if (linkshide == false){
-        links.style.display = "block";
-        links.className = 'links';
+        document.getElementById('linksback').classList.toggle('show');
+        linkshide = true;
+        setTimeout(function(){
+            links.style.display = "block";
+            links.className = 'links';
+            document.getElementById('linksback').className = "linksback";
+        }, 1000);
         }
     }
 }

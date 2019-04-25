@@ -60,6 +60,21 @@
     position: fixed;
 }
 
+.linksback{
+    position: fixed;
+    width: 100%;
+    height: 0%;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    background-color: black;
+    transition: all 1s;
+}
+
+.linksback.show{
+    height: 15%;
+}
+
 .links{
     z-index: 3;
     height: 17%;
@@ -67,6 +82,7 @@
     vertical-align: bottom;
     transition: opacity 0.7s;
     left: 0;
+    bottom: 0;
 }
 
 .links.fadeout{
@@ -87,21 +103,38 @@
 .first, .second{
     position: fixed;
     border: none;
-    background: #808080;
+    background: black;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
+    color: rgb(161, 161, 161);
     font-size: 25px;
     width: 51%;
     height: 15%;
     z-index: 4; 
-    bottom: 1px;
+    bottom: 0;
     transition: 0.4s;
     vertical-align: bottom;
     top: 85%;
 }
 
+.first.textfade{
+    color:black;
+}
+
+.second.textfade{
+    color:black;
+}
+
+.first.chosen{
+    color: white;
+}
+
+.second.chosen{
+    color: white;
+}
+
 .first:hover, .second:hover{
-    color:white;
+    color: white;
 }
 
 h1{
@@ -173,12 +206,16 @@ h2{
 .bar{
     position: fixed;
     border: none;
-    background: black;
+    background: white;
     width: 100%;
     height: 15%;
     z-index: 4; 
     bottom: 1px;
-    transition: 0.4s;
+    transition: 0.7s;
     vertical-align: bottom;
     top: 84%;
+}
+
+.bar.colorchange{
+    background: #414040
 }
