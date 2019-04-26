@@ -2,9 +2,36 @@
 video = document.getElementById('playVideo');
 links = document.getElementById('links');
 var linkshide;
+var linksclicked = false;
 var rowNumber;
 var view = "create";
 checkbox = document.getElementById('hint');
+file = document.getElementById('file');
+var jsonlength;
+
+file.onchange = function(){
+    var uploadedFile = file.files[0]; 
+    
+    if (uploadedFile) {
+        var readFile = new FileReader();
+        readFile.onload = function(e) { 
+            var contents = e.target.result;
+            var json = JSON.parse(contents);
+            got_data(json);
+        };
+        readFile.readAsText(uploadedFile);
+    } else { 
+        console.log("Failed to load file");
+    }
+
+    function got_data(json){
+        //alert('Name : ' + json[0].name + ', Family : '+ json[0].link)
+        var count = Object.keys(json).length;
+        createRows(count, json);
+        jsonlength = count;
+    }
+    
+}
 
 function setupCreate(){
     document.getElementById('setup').style.display = "block";
@@ -16,7 +43,11 @@ function setupClose(){
     document.getElementById('setup').style.display = "none";
     document.getElementById('setupClose').style.display = "none";
     document.getElementById('createButtons').style.display = "block";
+    if(jsonlength == null){
     passages = document.getElementById('passages').value;
+    } else {
+    passages = jsonlength;
+    }
     for(i=0;i<parseInt(passages);i++){
         name = document.getElementById('setupName'+(i+1)).value;
         document.getElementById('uploads'+(i+1)).id = name;
@@ -26,6 +57,7 @@ function setupClose(){
 function showPlay(){
         view = "play";
         links.style.opacity = "";
+        document.getElementById('linksback').style.display = "block";
         document.getElementById('first').className = "first";
         document.getElementById('second').className = "second";
         document.getElementById('bar').className = "bar";
@@ -46,11 +78,14 @@ function showPlay(){
 }
 
 function firstLink(){
+    if(linksclicked == false){
     document.getElementById('bar').classList.toggle('colorchange');
     document.getElementById('second').classList.toggle('textfade');
     document.getElementById('first').classList.toggle('chosen');
     timeToEnd = (video.duration - video.currentTime)*1000;
+    linksclicked = true;
     setTimeout(function(){
+        linksclicked = false;
         document.getElementById('first').className = "first";
         document.getElementById('second').className = "second";
         document.getElementById('bar').className = "bar";
@@ -67,6 +102,7 @@ function firstLink(){
         v=videoNumber;
         video.src = videosrc2;
         //Set Links
+        document.getElementById('linksback').classList.toggle('show');
         setTimeout(function(){
             end = document.getElementById("end"+v);
             if(end.checked == false){
@@ -76,18 +112,24 @@ function firstLink(){
                 document.getElementById('second').value = linkTwo;
             } else {
                 links.style.opacity = "0";
+                document.getElementById('linksback').style.display = "none";
             }
         },700)
         hideLinks(); 
     }, timeToEnd);
+    }
 }
 
 function secondLink(){
+    if(linksclicked == false){
     document.getElementById('bar').classList.toggle('colorchange');
     document.getElementById('first').classList.toggle('textfade');
     document.getElementById('second').classList.toggle('chosen');
     timeToEnd = (video.duration - video.currentTime)*1000;
+    linksclicked = true;
+    
     setTimeout(function(){
+        linksclicked = false;
         document.getElementById('first').className = "first";
         document.getElementById('second').className = "second";
         document.getElementById('bar').className = "bar";
@@ -105,6 +147,7 @@ function secondLink(){
         v=videoNumber;
         video.src = videosrc2;
         //Set Links
+        document.getElementById('linksback').classList.toggle('show');
         setTimeout(function(){
             end = document.getElementById("end"+v);
             if(end.checked == false){
@@ -114,24 +157,30 @@ function secondLink(){
                 document.getElementById('second').value = linkTwo;
             } else {
                 links.style.opacity = "0";
+                document.getElementById('linksback').style.display = "none";
             }
         },700)
         
         hideLinks();
-    }, timeToEnd);     
+    }, timeToEnd);   
+    }  
 }
 
 function hideLinks(){
     linkshide = true;
-    links.className = 'links fadeout';
+    links.classList.toggle('fadeout');
 }
 
 function setupSubmit(){
+    passages = document.getElementById('passages').value;
+    createRows(passages, null);
+}
+
+function createRows(passages, json2){
     var rows = document.getElementById('setupTable').rows.length;
     for(var i=parseInt(rows, 10);i>-1;i--){
         document.getElementById('setupTable').deleteRow(i-1);
     };
-    passages = document.getElementById('passages').value;
     for(var r=0;r<parseInt(passages);r++){
         var x = document.getElementById('setupTable').insertRow(r);
         rowNumber = r+1;
@@ -164,7 +213,13 @@ function setupSubmit(){
         rowEnd.setAttribute("type", "checkbox");
         rowEnd.setAttribute("id", "end"+rowNumber+"");
         rowEnd.setAttribute("class", rowNumber);
-
+        if(json2 != null){
+            rowInput.value = json2[r].link;
+            rowName.value = json2[r].name;
+            rowFirst.value = json2[r].first;
+            rowSecond.value = json2[r].second;
+            rowEnd.checked = json2[r].end;
+        }
         //Add items to row
         x.appendChild(rowInput);
         x.appendChild(rowName);
@@ -189,8 +244,9 @@ function setupSubmit(){
         x.appendChild(rowHintSecond);
         }
         x.appendChild(rowEnd);
-
+        
    };  
+   
 }
 
 video.ontimeupdate = function(){
@@ -206,8 +262,7 @@ video.ontimeupdate = function(){
         linkshide = true;
         setTimeout(function(){
             links.style.display = "block";
-            links.className = 'links';
-            document.getElementById('linksback').className = "linksback";
+            links.classList.toggle('fadeout');
         }, 1000);
         }
     }
@@ -218,21 +273,11 @@ video.onplay = function(){
     links.style.display = "none";
 }
 
-video.onclick = function(){
-    if(video.paused){
-        video.play();
-    } else {
-        video.pause();
-    }
-}
-
 window.onkeyup = function(e){
-    if(view == "play"){
+    if(e.code == "KeyA" && view == "play"){
         video.pause();
         document.getElementById('create').style.display = "block";
         document.getElementById('play').style.display = "none";
         view = "create";
-    }
-    
-    
+    }    
 }
