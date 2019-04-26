@@ -7,6 +7,7 @@ var rowNumber;
 var view = "create";
 checkbox = document.getElementById('hint');
 file = document.getElementById('file');
+var json;
 var jsonlength;
 
 file.onchange = function(){
@@ -16,7 +17,7 @@ file.onchange = function(){
         var readFile = new FileReader();
         readFile.onload = function(e) { 
             var contents = e.target.result;
-            var json = JSON.parse(contents);
+            json = JSON.parse(contents);
             got_data(json);
         };
         readFile.readAsText(uploadedFile);
@@ -91,7 +92,7 @@ function firstLink(){
         document.getElementById('bar').className = "bar";
         //Set Video Source
         nameFirst = document.getElementById('setupFirst'+v).value;
-        if(checkbox.checked == true){
+        if(json[v].hintfirst != null){
             hint = document.getElementById('hintFirst'+v).value;
             videosrc2 = document.getElementById(nameFirst+hint).value;
             videoNumber = document.getElementById(nameFirst+hint).className;
@@ -135,7 +136,7 @@ function secondLink(){
         document.getElementById('bar').className = "bar";
         //Set Video Source
         nameSecond = document.getElementById('setupSecond'+v).value;
-        if(checkbox.checked == true){
+        if(json[v].hintsecond != null){
             hint = document.getElementById('hintSecond'+v).value;
             videosrc2 = document.getElementById(nameSecond+hint).value;
             videoNumber = document.getElementById(nameSecond+hint).className;
@@ -202,6 +203,14 @@ function createRows(passages, json2){
         rowFirst.setAttribute("placeholder", "First Link");
         rowFirst.setAttribute("id", "setupFirst"+rowNumber+"");
         rowFirst.setAttribute("class", rowNumber);
+
+        rowHintFirst = document.createElement('input');
+        rowHintFirst.setAttribute("type", "text");
+        rowHintFirst.setAttribute("placeholder", "Hint");
+        rowHintFirst.setAttribute("id", "hintFirst"+rowNumber+"");
+        rowHintFirst.setAttribute("class", rowNumber);
+        rowHintFirst.style.width = "30px";
+
         //Create Second Link Input
         rowSecond = document.createElement('input');
         rowSecond.setAttribute("type", "Second");
@@ -209,40 +218,49 @@ function createRows(passages, json2){
         rowSecond.setAttribute("id", "setupSecond"+rowNumber+"");
         rowSecond.setAttribute("class", rowNumber);
 
-        rowEnd = document.createElement('input');
-        rowEnd.setAttribute("type", "checkbox");
-        rowEnd.setAttribute("id", "end"+rowNumber+"");
-        rowEnd.setAttribute("class", rowNumber);
-        if(json2 != null){
-            rowInput.value = json2[r].link;
-            rowName.value = json2[r].name;
-            rowFirst.value = json2[r].first;
-            rowSecond.value = json2[r].second;
-            rowEnd.checked = json2[r].end;
-        }
-        //Add items to row
-        x.appendChild(rowInput);
-        x.appendChild(rowName);
-        x.appendChild(rowFirst);
-        if(checkbox.checked == true){
-        //Create Hint Input
-        rowHintFirst = document.createElement('input');
-        rowHintFirst.setAttribute("type", "text");
-        rowHintFirst.setAttribute("placeholder", "Hint");
-        rowHintFirst.setAttribute("id", "hintFirst"+rowNumber+"");
-        rowHintFirst.setAttribute("class", rowNumber);
-        x.appendChild(rowHintFirst);
-        }
-        x.appendChild(rowSecond);
-        if(checkbox.checked == true){
-        //Create Hint Input
         rowHintSecond = document.createElement('input');
         rowHintSecond.setAttribute("type", "text");
         rowHintSecond.setAttribute("placeholder", "Hint");
         rowHintSecond.setAttribute("id", "hintSecond"+rowNumber+"");
         rowHintSecond.setAttribute("class", rowNumber);
-        x.appendChild(rowHintSecond);
+        rowHintSecond.style.width = "30px";
+
+        rowSecondsToEnd = document.createElement('input');
+        rowSecondsToEnd.setAttribute("type", "number");
+        rowSecondsToEnd.setAttribute("min", "0");
+        rowSecondsToEnd.setAttribute("id", "secondToLinks"+rowNumber+"");
+        rowSecondsToEnd.setAttribute("class", rowNumber);
+
+        rowEnd = document.createElement('input');
+        rowEnd.setAttribute("type", "checkbox");
+        rowEnd.setAttribute("id", "end"+rowNumber+"");
+        rowEnd.setAttribute("class", rowNumber);
+
+        if(json2 != null){
+            rowInput.value = json2[r].link;
+            rowName.value = json2[r].name;
+            rowFirst.value = json2[r].first;
+            if(json2[r].hintfirst != null && json2[r].hintfirst != ""){
+            console.log(1);
+            rowHintFirst.value = json2[r].hintfirst;
+            }
+            rowSecond.value = json2[r].second;
+            if(json2[r].hintsecond != null && json2[r].hintsecond != ""){
+            console.log(2);
+            rowHintSecond.value = json2[r].hintsecond;
+            }
+            rowEnd.checked = json2[r].end;
+            rowSecondsToEnd.value = json2[r].seconds;
+
         }
+        //Add items to row
+        x.appendChild(rowInput);
+        x.appendChild(rowName);
+        x.appendChild(rowFirst);
+        x.appendChild(rowHintFirst);
+        x.appendChild(rowSecond);
+        x.appendChild(rowHintSecond);
+        x.appendChild(rowSecondsToEnd);
         x.appendChild(rowEnd);
         
    };  
@@ -251,7 +269,7 @@ function createRows(passages, json2){
 
 video.ontimeupdate = function(){
     timeToEnd = (video.duration - video.currentTime)*1000;
-    timeToLinks = parseInt(document.getElementById('secondToLinks').value)*1000;
+    timeToLinks = parseInt(document.getElementById('secondToLinks'+v).value)*1000;
 
     document.getElementById('bar').style.width = (timeToEnd/timeToLinks)*100+"%";
     document.getElementById('bar').style.marginLeft = (100-(timeToEnd/timeToLinks)*100)/2+"%";

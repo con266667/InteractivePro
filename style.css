@@ -37,7 +37,8 @@
 }
 
 .setupTable{
-    margin-left: 25%;
+    display: none;
+    margin-left: 15%;
 }
 
 .logo{
